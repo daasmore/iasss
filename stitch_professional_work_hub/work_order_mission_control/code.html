@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Industrial CMMS | Mission Control</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --scanline-color: rgba(0, 242, 255, 0.03);
+            --grid-color: rgba(255, 255, 255, 0.02);
+        }
+        body {
+            background-color: #121415;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 32px 32px;
+            color: #e2e2e3;
+            overflow-x: hidden;
+        }
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 1px,
+                var(--scanline-color) 1px,
+                var(--scanline-color) 2px
+            );
+            pointer-events: none;
+            z-index: 100;
+        }
+        .glow-cyan {
+            box-shadow: 0 0 8px rgba(0, 242, 255, 0.4);
+        }
+        .glow-text-cyan {
+            text-shadow: 0 0 5px rgba(0, 242, 255, 0.6);
+        }
+        .module-border {
+            border: 1px solid rgba(132, 148, 149, 0.2);
+            transition: border-color 0.3s ease;
+        }
+        .module-border:hover {
+            border-color: #00dbe7;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e2021;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #3a494b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #00dbe7;
+        }
+        @keyframes pulse-cyan {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-pulse-cyan {
+            animation: pulse-cyan 2s infinite;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#271900",
+                    "inverse-primary": "#00696f",
+                    "on-surface": "#e2e2e3",
+                    "on-surface-variant": "#b9cacb",
+                    "on-tertiary-fixed": "#410003",
+                    "on-secondary-container": "#6b4b00",
+                    "tertiary": "#fff5f4",
+                    "surface-container": "#1e2021",
+                    "secondary-fixed": "#ffdea8",
+                    "on-tertiary-fixed-variant": "#930010",
+                    "surface-tint": "#00dbe7",
+                    "on-secondary": "#412d00",
+                    "surface-dim": "#121415",
+                    "surface": "#121415",
+                    "surface-container-highest": "#333536",
+                    "tertiary-fixed": "#ffdad6",
+                    "on-primary": "#00363a",
+                    "inverse-on-surface": "#2f3132",
+                    "surface-container-lowest": "#0c0e0f",
+                    "on-primary-fixed": "#002022",
+                    "on-error": "#690005",
+                    "background": "#121415",
+                    "surface-bright": "#38393a",
+                    "secondary-fixed-dim": "#ffba20",
+                    "primary-fixed-dim": "#00dbe7",
+                    "on-error-container": "#ffdad6",
+                    "outline": "#849495",
+                    "on-tertiary": "#680008",
+                    "surface-container-low": "#1a1c1d",
+                    "on-primary-fixed-variant": "#004f54",
+                    "on-primary-container": "#006a71",
+                    "tertiary-container": "#ffd0cb",
+                    "primary": "#e1fdff",
+                    "on-secondary-fixed-variant": "#5e4200",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "inverse-surface": "#e2e2e3",
+                    "error": "#ffb4ab",
+                    "on-background": "#e2e2e3",
+                    "outline-variant": "#3a494b",
+                    "secondary-container": "#feb700",
+                    "secondary": "#ffdb9d",
+                    "on-tertiary-container": "#c2031a",
+                    "surface-variant": "#333536",
+                    "surface-container-high": "#282a2b",
+                    "error-container": "#93000a",
+                    "primary-fixed": "#74f5ff",
+                    "primary-container": "#00f2ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "module-padding": "16px",
+                    "gutter": "12px",
+                    "grid-overlay-size": "32px"
+            },
+            "fontFamily": {
+                    "label-xs": ["JetBrains Mono"],
+                    "display-tech": ["JetBrains Mono"],
+                    "data-mono": ["JetBrains Mono"],
+                    "headline-sm": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-xs": ["10px", {"lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "display-tech": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="flex flex-col h-screen overflow-hidden">
+<div class="scanlines"></div>
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 backdrop-blur-md flex justify-between items-center px-gutter w-full h-[64px] z-50 border-b border-border-subtle shadow-sm fixed top-0">
+<div class="flex items-center gap-8">
+<div class="font-headline-md text-headline-md font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[32px]" data-weight="fill">precision_manufacturing</span>
+<span>Industrial CMMS</span>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-data-mono text-data-mono text-primary border-b-2 border-primary pb-1 hover:text-primary transition-colors duration-200" href="#">Dashboard</a>
+<a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Assets</a>
+<a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Schedule</a>
+<a class="font-data-mono text-data-mono text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Logs</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-primary/5 border border-primary/20 rounded">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse-cyan"></span>
+<span class="font-label-xs text-label-xs text-primary uppercase">System Status: Operational</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined">notifications</span></button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined">settings</span></button>
+<div class="w-8 h-8 rounded border border-outline-variant overflow-hidden ml-2 bg-surface-container-highest">
+<img class="w-full h-full object-cover" data-alt="A portrait of a senior system administrator in a dark tech-focused setting, dramatic lighting, wearing industrial headphones, focused expression, high-contrast digital art style with cyan highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8DR7E_qgKrrgtdExK32cUBKQHlheiiPXmANzqac7IufMs32o-M5ltUuEPDp4T8leTOyNTdAdOq-ENOZ5kfu_JfQU2TjDmYTclP_584imXpB0c7oXd_1_aGnS1i8d2IP7P3opiQzN1jsZRhv28bnqVEe8qJTgZkoHLmOa36IUrkN09a0f3Co_lIHBMPs5tcim07QjMeWDPx5PsqLUvgPhDcPVQbPrtRMUHwV3J59xBOC27hrDgQkEc9EnKrqB61vgszlGkHU5kbQ0"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 pt-[64px]">
+<!-- Side Navigation Bar -->
+<aside class="flex flex-col h-full z-40 transition-all duration-300 ease-in-out bg-surface-container dark:bg-surface-dim border-r border-border-subtle w-[240px] shrink-0">
+<div class="p-4 border-b border-outline-variant/30">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary/10 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-primary">account_circle</span>
+</div>
+<div>
+<div class="font-label-caps text-label-xs text-on-surface uppercase">Main Ops</div>
+<div class="font-label-xs text-[10px] text-on-surface-variant">Admin Level 4</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 py-4 flex flex-col gap-1 overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-xs text-label-xs uppercase">Overview</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-xs text-label-xs uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 bg-primary/10 text-primary border-r-4 border-primary px-4 py-3 shadow-[0_0_15px_rgba(76,215,246,0.2)] transition-all" href="#">
+<span class="material-symbols-outlined" data-weight="fill">build</span>
+<span class="font-label-xs text-label-xs uppercase">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-xs text-label-xs uppercase">Personnel</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-xs text-label-xs uppercase">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-label-xs text-label-xs uppercase">Security</span>
+</a>
+</nav>
+<div class="p-4 flex flex-col gap-1 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span class="font-label-xs text-label-xs uppercase">Support</span>
+</a>
+<a class="flex items-center gap-3 text-error px-4 py-2 hover:bg-error/10 transition-all" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="font-label-xs text-label-xs uppercase">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-hidden flex flex-col p-gutter relative">
+<!-- Global Dashboard Background Asset -->
+<div class="absolute inset-0 z-0 opacity-20 pointer-events-none">
+
+</div>
+<!-- Dashboard Header Area -->
+<header class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+<div>
+<div class="font-label-xs text-label-xs text-primary uppercase tracking-widest mb-1">Central Operations / Maintenance</div>
+<h1 class="font-display-tech text-display-tech text-on-surface uppercase glow-text-cyan flex items-center gap-4">
+                        Work Order Registry
+                        <span class="px-2 py-0.5 bg-surface-container-highest border border-outline-variant text-[10px] font-data-mono text-on-surface-variant align-middle">VER 4.0.8-ALPHA</span>
+</h1>
+</div>
+<div class="flex gap-3">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[18px]">search</span>
+<input class="bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-0 text-data-mono font-data-mono text-on-surface pl-10 pr-4 py-2 w-64 uppercase placeholder:text-outline-variant" placeholder="QUERY ID OR ASSET..." type="text"/>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container font-label-xs text-label-xs uppercase glow-cyan hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Create Work Order
+                    </button>
+</div>
+</header>
+<!-- Stats Ribbon -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-gutter mb-6 relative z-10">
+<div class="bg-surface-container-lowest module-border p-3">
+<div class="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1">Total Active</div>
+<div class="font-display-tech text-display-tech text-primary">142</div>
+</div>
+<div class="bg-surface-container-lowest module-border p-3 border-l-4 border-l-secondary-container">
+<div class="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1">Critical Priority</div>
+<div class="font-display-tech text-display-tech text-secondary-container">08</div>
+</div>
+<div class="bg-surface-container-lowest module-border p-3">
+<div class="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1">Pending Review</div>
+<div class="font-display-tech text-display-tech text-on-surface">12</div>
+</div>
+<div class="bg-surface-container-lowest module-border p-3 border-l-4 border-l-error">
+<div class="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1">Overdue Jobs</div>
+<div class="font-display-tech text-display-tech text-error">03</div>
+</div>
+<div class="bg-surface-container-lowest module-border p-3 hidden lg:block">
+<div class="font-label-xs text-label-xs text-on-surface-variant uppercase mb-1">Tech Availability</div>
+<div class="font-display-tech text-display-tech text-primary">88%</div>
+</div>
+</div>
+<!-- Tactical List Module -->
+<section class="flex-1 bg-surface-container-lowest module-border relative z-10 flex flex-col min-h-0">
+<!-- Module Header -->
+<div class="flex items-center justify-between px-4 py-2 bg-surface-container-highest border-b border-outline-variant/30">
+<div class="flex items-center gap-4">
+<span class="font-label-xs text-label-xs text-primary uppercase font-bold">MOD-WO-082</span>
+<div class="h-4 w-[1px] bg-outline-variant"></div>
+<span class="font-label-xs text-label-xs text-on-surface-variant uppercase">Mission Control Table</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary flex items-center gap-1 font-label-xs text-label-xs uppercase">
+<span class="material-symbols-outlined text-[16px]">filter_list</span> Filter
+                        </button>
+<button class="text-on-surface-variant hover:text-primary flex items-center gap-1 font-label-xs text-label-xs uppercase">
+<span class="material-symbols-outlined text-[16px]">download</span> Export
+                        </button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="flex-1 overflow-auto custom-scrollbar">
+<table class="w-full border-collapse text-left font-data-mono text-data-mono">
+<thead class="sticky top-0 bg-surface-container shadow-sm z-20">
+<tr class="border-b border-outline-variant uppercase text-outline">
+<th class="px-4 py-3 font-semibold border-r border-outline-variant/30">WO ID</th>
+<th class="px-4 py-3 font-semibold border-r border-outline-variant/30">Release Date</th>
+<th class="px-4 py-3 font-semibold border-r border-outline-variant/30">Asset Descriptor</th>
+<th class="px-4 py-3 font-semibold border-r border-outline-variant/30">Type</th>
+<th class="px-4 py-3 font-semibold border-r border-outline-variant/30">Technician</th>
+<th class="px-4 py-3 font-semibold">Status Matrix</th>
+</tr>
+</thead>
+<tbody>
+<!-- Row 1 -->
+<tr class="group hover:bg-white/5 border-b border-outline-variant/20 transition-all cursor-pointer">
+<td class="px-4 py-3 border-r border-outline-variant/30 group-hover:border-l-2 group-hover:border-l-primary group-hover:text-primary">#WO-2024-001</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">2024.05.21:09:42</td>
+<td class="px-4 py-3 border-r border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">settings_input_component</span>
+                                    CHILLER-UNIT-09
+                                </td>
+<td class="px-4 py-3 border-r border-outline-variant/30 text-secondary">Preventive</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">S. Miller (L4)</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary animate-pulse"></span>
+<span class="px-2 py-0.5 bg-secondary/10 border border-secondary/30 text-[10px] text-secondary">IN PROGRESS</span>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-white/5 border-b border-outline-variant/20 transition-all cursor-pointer">
+<td class="px-4 py-3 border-r border-outline-variant/30 group-hover:border-l-2 group-hover:border-l-primary group-hover:text-primary">#WO-2024-042</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">2024.05.22:11:15</td>
+<td class="px-4 py-3 border-r border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[18px]">emergency_home</span>
+                                    CONVEYOR-B-SEC3
+                                </td>
+<td class="px-4 py-3 border-r border-outline-variant/30 text-error">Corrective</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">J. Henderson (L2)</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-primary"></span>
+<span class="px-2 py-0.5 bg-primary/10 border border-primary/30 text-[10px] text-primary">NEW</span>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-white/5 border-b border-outline-variant/20 transition-all cursor-pointer">
+<td class="px-4 py-3 border-r border-outline-variant/30 group-hover:border-l-2 group-hover:border-l-primary group-hover:text-primary">#WO-2024-089</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">2024.05.20:14:00</td>
+<td class="px-4 py-3 border-r border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline-variant text-[18px]">power</span>
+                                    GENERATOR-SET-A2
+                                </td>
+<td class="px-4 py-3 border-r border-outline-variant/30 text-secondary">Preventive</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">K. Chen (L5)</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-surface-variant"></span>
+<span class="px-2 py-0.5 bg-surface-variant/10 border border-surface-variant/30 text-[10px] text-on-surface-variant">REVIEW</span>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-white/5 border-b border-outline-variant/20 transition-all cursor-pointer">
+<td class="px-4 py-3 border-r border-outline-variant/30 group-hover:border-l-2 group-hover:border-l-primary group-hover:text-primary">#WO-2024-112</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">2024.05.19:16:30</td>
+<td class="px-4 py-3 border-r border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">water_drop</span>
+                                    HYDRAULIC-PUMP-L1
+                                </td>
+<td class="px-4 py-3 border-r border-outline-variant/30 text-secondary">Preventive</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">T. Richards (L3)</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-on-primary-container"></span>
+<span class="px-2 py-0.5 bg-on-primary-container/20 border border-on-primary-container/40 text-[10px] text-on-primary-container">COMPLETED</span>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="group hover:bg-white/5 border-b border-outline-variant/20 transition-all cursor-pointer">
+<td class="px-4 py-3 border-r border-outline-variant/30 group-hover:border-l-2 group-hover:border-l-primary group-hover:text-primary">#WO-2024-155</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">2024.05.21:22:10</td>
+<td class="px-4 py-3 border-r border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[18px]">ventilator</span>
+                                    HVAC-ROOFTOP-04
+                                </td>
+<td class="px-4 py-3 border-r border-outline-variant/30 text-error">Corrective</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">M. Vane (L4)</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-secondary animate-pulse"></span>
+<span class="px-2 py-0.5 bg-secondary/10 border border-secondary/30 text-[10px] text-secondary">IN PROGRESS</span>
+</div>
+</td>
+</tr>
+<!-- Row 6 -->
+<tr class="group hover:bg-white/5 border-b border-outline-variant/20 transition-all cursor-pointer">
+<td class="px-4 py-3 border-r border-outline-variant/30 group-hover:border-l-2 group-hover:border-l-primary group-hover:text-primary">#WO-2024-201</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">2024.05.22:07:05</td>
+<td class="px-4 py-3 border-r border-outline-variant/30 flex items-center gap-2">
+<span class="material-symbols-outlined text-outline-variant text-[18px]">bolt</span>
+                                    TRANSFORMER-SUB-01
+                                </td>
+<td class="px-4 py-3 border-r border-outline-variant/30 text-secondary">Preventive</td>
+<td class="px-4 py-3 border-r border-outline-variant/30">UNASSIGNED</td>
+<td class="px-4 py-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-primary"></span>
+<span class="px-2 py-0.5 bg-primary/10 border border-primary/30 text-[10px] text-primary">NEW</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Module Footer -->
+<div class="px-4 py-2 border-t border-outline-variant/30 flex justify-between items-center bg-surface-container">
+<div class="font-label-xs text-label-xs text-on-surface-variant uppercase">
+                        Showing 6 of 142 records
+                    </div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 border border-outline-variant hover:border-primary text-on-surface-variant hover:text-primary transition-all font-data-mono text-[11px]">PREV</button>
+<div class="flex gap-1">
+<span class="px-3 py-1 bg-primary text-on-primary font-data-mono text-[11px]">01</span>
+<span class="px-3 py-1 border border-outline-variant text-on-surface-variant font-data-mono text-[11px]">02</span>
+<span class="px-3 py-1 border border-outline-variant text-on-surface-variant font-data-mono text-[11px]">03</span>
+</div>
+<button class="px-3 py-1 border border-outline-variant hover:border-primary text-on-surface-variant hover:text-primary transition-all font-data-mono text-[11px]">NEXT</button>
+</div>
+</div>
+</section>
+<!-- Bottom Dashboard Metadata Overlay -->
+<footer class="mt-4 flex justify-between items-center relative z-10 px-gutter py-2 border-t border-outline-variant/10">
+<div class="flex gap-6">
+<div class="flex flex-col">
+<span class="font-label-xs text-[9px] text-outline uppercase">Coord Registry</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant">34.0522° N, 118.2437° W</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-xs text-[9px] text-outline uppercase">Uptime Cycle</span>
+<span class="font-data-mono text-[10px] text-on-surface-variant">1,402:22:19:04</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-primary rounded-full"></span>
+<span class="font-label-xs text-[9px] text-primary uppercase">Encrypted Connection</span>
+</div>
+<span class="font-label-xs text-[9px] text-outline uppercase">IAS Mainframe v4.8</span>
+</div>
+</footer>
+</main>
+</div>
+<!-- Micro-interaction JS -->
+<script>
+        // Atmospheric interaction: subtle movement of active indicators
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                const statusLed = row.querySelector('.w-2.h-2');
+                if (statusLed) {
+                    statusLed.classList.add('glow-cyan');
+                }
+            });
+            row.addEventListener('mouseleave', () => {
+                const statusLed = row.querySelector('.w-2.h-2');
+                if (statusLed) {
+                    statusLed.classList.remove('glow-cyan');
+                }
+            });
+        });
+
+        // Simulating real-time updates for status indicators
+        setInterval(() => {
+            const systemStatus = document.querySelector('.animate-pulse-cyan');
+            if (systemStatus) {
+                systemStatus.style.opacity = systemStatus.style.opacity === '0.5' ? '1' : '0.5';
+            }
+        }, 1000);
+    </script>
+</body></html>

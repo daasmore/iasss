@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IAS Maintenance | System Authentication</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#00dbe7",
+                        "on-secondary-fixed": "#271900",
+                        "surface-container": "#1e2021",
+                        "primary-container": "#00f2ff",
+                        "on-background": "#e2e2e3",
+                        "on-secondary-fixed-variant": "#5e4200",
+                        "outline-variant": "#3a494b",
+                        "inverse-surface": "#e2e2e3",
+                        "on-tertiary-fixed": "#410003",
+                        "secondary": "#ffdb9d",
+                        "surface-tint": "#00dbe7",
+                        "error": "#ffb4ab",
+                        "secondary-fixed-dim": "#ffba20",
+                        "primary-fixed": "#74f5ff",
+                        "outline": "#849495",
+                        "on-tertiary-container": "#c2031a",
+                        "surface-container-high": "#282a2b",
+                        "on-secondary": "#412d00",
+                        "secondary-container": "#feb700",
+                        "on-error": "#690005",
+                        "surface-bright": "#38393a",
+                        "on-primary-fixed": "#002022",
+                        "inverse-primary": "#00696f",
+                        "surface-dim": "#121415",
+                        "background": "#121415",
+                        "surface-container-low": "#1a1c1d",
+                        "surface-container-highest": "#333536",
+                        "on-surface-variant": "#b9cacb",
+                        "tertiary-fixed-dim": "#ffb3ad",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-primary-container": "#006a71",
+                        "on-secondary-container": "#6b4b00",
+                        "secondary-fixed": "#ffdea8",
+                        "tertiary-container": "#ffd0cb",
+                        "surface-variant": "#333536",
+                        "on-surface": "#e2e2e3",
+                        "on-primary": "#00363a",
+                        "on-tertiary": "#680008",
+                        "error-container": "#93000a",
+                        "tertiary-fixed": "#ffdad6",
+                        "primary": "#e1fdff",
+                        "inverse-on-surface": "#2f3132",
+                        "tertiary": "#fff5f4",
+                        "surface-container-lowest": "#0c0e0f",
+                        "on-tertiary-fixed-variant": "#930010",
+                        "on-error-container": "#ffdad6",
+                        "surface": "#121415"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "module-padding": "16px",
+                        "grid-overlay-size": "32px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["JetBrains Mono"],
+                        "label-xs": ["JetBrains Mono"],
+                        "headline-sm": ["Inter"],
+                        "data-mono-mobile": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "display-tech": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "label-xs": ["10px", {"lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "data-mono-mobile": ["12px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-tech": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0c0e0f;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        .grid-bg {
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 2px;
+            pointer-events: none;
+        }
+
+        .glass-card {
+            background: rgba(30, 32, 33, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 219, 231, 0.05);
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.4);
+            background-color: rgba(0, 242, 255, 0.05);
+        }
+
+        .input-glow:focus {
+            box-shadow: inset 0 0 8px rgba(0, 219, 231, 0.2);
+            border-color: #00dbe7;
+        }
+
+        @keyframes pulse-cyan {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .status-led {
+            width: 6px;
+            height: 6px;
+            border-radius: 1px;
+            animation: pulse-cyan 2s infinite ease-in-out;
+        }
+
+        .glitch-text:hover {
+            text-shadow: 2px 0 #00f2ff, -2px 0 #ff00de;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background min-h-screen flex flex-col items-center justify-center relative">
+<!-- Background Industrial Scene -->
+<div class="fixed inset-0 z-0">
+<div class="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay" data-alt="A dark, high-tech industrial server room with rows of glowing cyan LED equipment racks receding into the distance. The lighting is cinematic and moody, with deep obsidian shadows and sharp highlights. Subtle data visualization overlays and blue-hued mist create a high-stakes mission control atmosphere. Professional 8k photography style with technical precision." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA4gaMVtrB94gQCF2v9hQzEO8fy4Qlh-S8Vb_WfV73gDrgLMafsGQ-3K9CbaMnXuNZMvyv84eZvfO0aUlS9JsEeUUmoQmvmcdKmQnki65l5AcN2KUwCS_PoTx0haWY95ognJXQrPvdD4WdZgHJIrGHjOT0g9pGV3QWZFlUcadxKG-lbpZQaBxxNmQ98f47pOwnqWOA6D6nc-AbaAkGPIgkTcN8Lu-VoX96dRIAoYDSv8qNnRyL_76tPLPl58nTq7ZCvSn4DZsIb5BI')">
+</div>
+<div class="absolute inset-0 bg-gradient-to-tr from-surface-container-lowest via-transparent to-primary-container/5"></div>
+<div class="grid-bg absolute inset-0"></div>
+<div class="scanlines absolute inset-0 opacity-20"></div>
+</div>
+<!-- Technical Header Metadata -->
+<div class="fixed top-gutter left-gutter z-10 hidden md:flex items-center gap-4">
+<div class="flex items-center gap-2">
+<div class="status-led bg-primary-container"></div>
+<span class="font-label-xs text-label-xs text-primary-container">SYS_ONLINE</span>
+</div>
+<div class="w-[1px] h-3 bg-outline-variant"></div>
+<span class="font-label-xs text-label-xs text-on-surface-variant">UPTIME: 144:12:09:44</span>
+</div>
+<div class="fixed top-gutter right-gutter z-10 hidden md:block">
+<span class="font-label-xs text-label-xs text-on-surface-variant">LOC: 40.7128° N, 74.0060° W</span>
+</div>
+<!-- Main Login Container -->
+<main class="relative z-20 w-full max-w-[420px] px-6">
+<div class="glass-card p-10 flex flex-col items-center space-y-8 relative overflow-hidden">
+<!-- Decorative Corners -->
+<div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary-container/40"></div>
+<div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary-container/40"></div>
+<div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary-container/40"></div>
+<div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary-container/40"></div>
+<!-- Header Section -->
+<div class="flex flex-col items-center text-center space-y-4">
+<div class="w-48 h-auto mb-2">
+<img alt="IAS Support Logo" class="w-full" src="https://lh3.googleusercontent.com/aida/AP1WRLuc_cRfaDkmmWkc2W2J1gZOH1EA5BmqoXPTPMvmsxJ9x8A6xmUYEfLghwEaVibevzkR_Ob4Tqa0z9TlbH4R9ALFRIYiXXbp2ho0oSSaqottyMEp67TVIvSi1QXzBURbO26AOLjxRv0WhI0t-ynh7_Motxe1u321nMWksPAuS9XGTjq0pe3qTtcXAKTFq1uHlqhMk_IkRz_EttdBObZe0LpPAaizrBqsaURD2lMhRLG8_ROov-MnuRyArc0"/>
+</div>
+<div class="space-y-1">
+<h1 class="font-display-tech text-display-tech text-primary tracking-tight">System Authentication</h1>
+<p class="font-label-xs text-label-xs text-on-surface-variant uppercase tracking-widest">Access Restricted to Authorized Personnel Only</p>
+</div>
+</div>
+<!-- Form Section -->
+<form class="w-full space-y-6" onsubmit="event.preventDefault();">
+<div class="space-y-4">
+<!-- Operator ID Field -->
+<div class="space-y-1.5">
+<label class="font-label-xs text-label-xs text-on-surface-variant uppercase block">Operator ID</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-container transition-colors" style="font-size: 18px;">badge</span>
+<input class="w-full bg-surface-container-lowest/50 border border-outline-variant px-10 py-3 font-data-mono text-data-mono text-primary placeholder:text-outline-variant focus:outline-none input-glow transition-all" placeholder="ENTER_ID" type="text"/>
+</div>
+</div>
+<!-- Passcode Field -->
+<div class="space-y-1.5">
+<label class="font-label-xs text-label-xs text-on-surface-variant uppercase block">Passcode</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary-container transition-colors" style="font-size: 18px;">lock</span>
+<input class="w-full bg-surface-container-lowest/50 border border-outline-variant px-10 py-3 font-data-mono text-data-mono text-primary placeholder:text-outline-variant focus:outline-none input-glow transition-all" placeholder="********" type="password"/>
+</div>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-transparent border border-primary-container/60 text-primary-container font-headline-sm text-headline-sm py-4 btn-glow transition-all active:scale-[0.98] flex items-center justify-center gap-3">
+<span class="font-display-tech text-sm tracking-[0.2em] uppercase">Initialize Login</span>
+<span class="material-symbols-outlined" style="font-size: 20px;">login</span>
+</button>
+</form>
+<!-- Links Section -->
+<div class="w-full flex justify-between items-center pt-4">
+<a class="font-label-xs text-label-xs text-on-surface-variant hover:text-primary-container transition-colors flex items-center gap-1" href="#">
+<span class="material-symbols-outlined" style="font-size: 14px;">help_outline</span>
+                    Forgot Credentials?
+                </a>
+<a class="font-label-xs text-label-xs text-on-surface-variant hover:text-primary-container transition-colors flex items-center gap-1" href="#">
+                    System Support
+                    <span class="material-symbols-outlined" style="font-size: 14px;">arrow_forward_ios</span>
+</a>
+</div>
+</div>
+<!-- Footer Metadata -->
+<div class="mt-8 flex justify-between items-center w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 14px;">security</span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">SECURE_CHANNEL_AES256</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-xs text-label-xs text-on-surface-variant">NODE_ID: CMD-CENTER-01</span>
+<span class="w-2 h-2 bg-primary-container rounded-full opacity-50"></span>
+</div>
+</div>
+</main>
+<!-- Side Decoration Elements -->
+<div class="fixed left-0 top-1/2 -translate-y-1/2 px-4 space-y-8 hidden xl:flex flex-col opacity-20">
+<div class="rotate-90 origin-left flex items-center gap-4 whitespace-nowrap">
+<span class="font-label-xs text-label-xs text-on-surface-variant">PROTOCOL: ALPHA-9-SECURE</span>
+<div class="h-[1px] w-48 bg-outline-variant"></div>
+</div>
+</div>
+<div class="fixed right-0 bottom-1/4 px-4 hidden xl:block opacity-20">
+<div class="font-label-xs text-label-xs text-on-surface-variant space-y-1 text-right">
+<p>MEM: 82.4%</p>
+<p>CPU: 14.1%</p>
+<p>THR: 32.2°C</p>
+</div>
+</div>
+<!-- Subtle Scanline Animation Script -->
+<script>
+        // Simple interactive glow movement based on cursor
+        document.addEventListener('mousemove', (e) => {
+            const card = document.querySelector('.glass-card');
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Apply slight tilt effect
+            const rotateX = (y - rect.height / 2) / 40;
+            const rotateY = -(x - rect.width / 2) / 40;
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        document.addEventListener('mouseleave', () => {
+            const card = document.querySelector('.glass-card');
+            card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        });
+    </script>
+</body></html>
