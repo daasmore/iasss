@@ -1,0 +1,540 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>IAS Maintenance | Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;family=Sora:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#11141d",
+                        "on-primary-container": "#ffd9e2",
+                        "tertiary": "#d0bcff",
+                        "on-secondary-fixed-variant": "#3c2d5d",
+                        "secondary-fixed-dim": "#b1a0e8",
+                        "error": "#ffb4ab",
+                        "on-background": "#e1e2e9",
+                        "surface-container": "#191c24",
+                        "on-surface": "#e1e2e9",
+                        "surface-container-lowest": "#0b0e14",
+                        "on-primary-fixed": "#3f0019",
+                        "on-tertiary-fixed": "#21005d",
+                        "on-secondary": "#1d2e3d",
+                        "surface-dim": "#11141d",
+                        "tertiary-container": "#4f378b",
+                        "surface-tint": "#ff2d78",
+                        "on-tertiary": "#381e72",
+                        "on-error": "#690005",
+                        "on-secondary-container": "#d3e4ff",
+                        "primary-fixed-dim": "#ffb1c8",
+                        "on-error-container": "#ffdad6",
+                        "background": "#0b0e14",
+                        "error-container": "#93000a",
+                        "surface": "#0b0e14",
+                        "primary-fixed": "#ffd9e2",
+                        "tertiary-fixed": "#eaddff",
+                        "surface-variant": "#44474f",
+                        "outline": "#8e9099",
+                        "surface-container-high": "#23262f",
+                        "inverse-surface": "#e1e2e9",
+                        "on-tertiary-container": "#eaddff",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "inverse-primary": "#ff2d78",
+                        "secondary-container": "#3f4759",
+                        "primary": "#ff2d78",
+                        "inverse-on-surface": "#2e3036",
+                        "secondary": "#00f2ff",
+                        "surface-container-highest": "#33353c",
+                        "on-secondary-fixed": "#001d35",
+                        "primary-container": "#980044",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#373942",
+                        "on-surface-variant": "#c4c6d0",
+                        "secondary-fixed": "#d3e4ff",
+                        "on-primary-fixed-variant": "#7d0038",
+                        "on-tertiary-fixed-variant": "#4f378b",
+                        "outline-variant": "#44474f",
+                        "accent-purple": "#b1a0e8",
+                        "accent-pink": "#ff2d78",
+                        "accent-cyan": "#00f2ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "4px",
+                        "lg": "8px",
+                        "xl": "12px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "unit": "4px",
+                        "module-padding": "16px",
+                        "grid-overlay-size": "32px",
+                        "row-height-dense": "56px"
+                    },
+                    "fontFamily": {
+                        "data-mono-mobile": ["JetBrains Mono"],
+                        "label-xs": ["JetBrains Mono"],
+                        "headline-sm": ["Sora"],
+                        "body-md": ["Sora"],
+                        "data-mono": ["JetBrains Mono"],
+                        "display-tech": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "data-mono-mobile": ["12px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "label-xs": ["10px", {"lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-tech": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0b0e14;
+            background-image: 
+                linear-gradient(rgba(255, 45, 120, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 45, 120, 0.02) 1px, transparent 1px);
+            background-size: 32px 32px;
+            color: #e1e2e9;
+        }
+        .scanline {
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.15) 50%);
+            background-size: 100% 4px;
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 10px rgba(255, 45, 120, 0.25);
+        }
+        .neon-glow-cyan {
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.25);
+        }
+        .active-indicator-pink {
+            box-shadow: 0 0 15px rgba(255, 45, 120, 0.5);
+        }
+        .active-indicator-cyan {
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+        }
+        .module-border {
+            border: 1px solid rgba(142, 144, 153, 0.15);
+            transition: all 0.3s ease;
+        }
+        .module-border:hover {
+            border-color: rgba(255, 45, 120, 0.4);
+            box-shadow: 0 0 12px rgba(255, 45, 120, 0.05);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        @keyframes pulse-pink {
+            0% { opacity: 0.4; transform: scale(0.95); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.4; transform: scale(0.95); }
+        }
+        .led-pulse-pink {
+            animation: pulse-pink 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface overflow-hidden h-screen flex">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full z-40 transition-all duration-300 ease-in-out fixed left-0 top-0 w-[240px] bg-surface-container-low border-r border-outline-variant/30 shadow-none">
+<div class="p-gutter flex items-center gap-3 mb-6">
+<img alt="IAS Logo" class="h-8 w-auto filter hue-rotate-[140deg] brightness-125" src="https://lh3.googleusercontent.com/aida/AP1WRLuc_cRfaDkmmWkc2W2J1gZOH1EA5BmqoXPTPMvmsxJ9x8A6xmUYEfLghwEaVibevzkR_Ob4Tqa0z9TlbH4R9ALFRIYiXXbp2ho0oSSaqottyMEp67TVIvSi1QXzBURbO26AOLjxRv0WhI0t-ynh7_Motxe1u321nMWksPAuS9XGTjq0pe3qTtcXAKTFq1uHlqhMk_IkRz_EttdBObZe0LpPAaizrBqsaURD2lMhRLG8_ROov-MnuRyArc0">
+<div>
+<h1 class="font-headline-sm text-headline-sm text-primary uppercase tracking-tighter">Main Ops</h1>
+<p class="font-label-xs text-label-xs text-on-surface-variant">ADMIN LEVEL 4</p>
+</div>
+</div>
+<nav class="flex-1">
+<a class="flex items-center gap-3 bg-primary/10 text-primary border-r-4 border-primary px-4 py-3 neon-glow-pink" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-xs text-label-xs uppercase">Overview</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant/30 hover:text-accent-cyan transition-all duration-300" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-xs text-label-xs uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant/30 hover:text-accent-pink transition-all duration-300" href="#">
+<span class="material-symbols-outlined">build</span>
+<span class="font-label-xs text-label-xs uppercase">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant/30 hover:text-accent-purple transition-all duration-300" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-xs text-label-xs uppercase">Personnel</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant/30 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-xs text-label-xs uppercase">Reports</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant/30 transition-all duration-300" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<span class="font-label-xs text-label-xs uppercase">Security</span>
+</a>
+</nav>
+<div class="mt-auto p-gutter border-t border-outline-variant/20">
+<button class="w-full mb-4 px-4 py-2 border border-primary text-primary font-label-xs uppercase hover:bg-primary/10 transition-all neon-glow-pink">
+            New Ticket
+        </button>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 text-on-surface-variant px-2 py-1 hover:text-primary" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-xs text-label-xs uppercase">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-2 py-1 hover:text-error" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-xs text-label-xs uppercase">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Console -->
+<main class="ml-[240px] flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-gutter w-full h-row-height-dense z-50 bg-surface/80 backdrop-blur-lg border-b border-outline-variant/30 shadow-sm">
+<div class="flex items-center gap-6">
+<span class="font-headline-md text-headline-md font-bold text-accent-pink tracking-widest">INDUSTRIAL CMMS</span>
+<div class="flex items-center gap-4 ml-8">
+<a class="text-primary border-b-2 border-primary pb-1 font-data-mono text-data-mono" href="#">Dashboard</a>
+<a class="text-on-surface-variant font-data-mono text-data-mono hover:text-accent-cyan transition-colors" href="#">Assets</a>
+<a class="text-on-surface-variant font-data-mono text-data-mono hover:text-accent-purple transition-colors" href="#">Schedule</a>
+<a class="text-on-surface-variant font-data-mono text-data-mono hover:text-accent-pink transition-colors" href="#">Logs</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-3 py-1 bg-accent-cyan/10 rounded border border-accent-cyan/20">
+<div class="w-2 h-2 bg-accent-cyan rounded-full shadow-[0_0_8px_rgba(0,242,255,0.8)]"></div>
+<span class="font-data-mono text-data-mono text-accent-cyan">System Status: Operational</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary">settings</button>
+<div class="w-8 h-8 bg-surface-container-high border border-outline-variant/30 flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<div class="flex-1 p-gutter overflow-y-auto space-y-gutter relative">
+<!-- Global Grid Metadata overlay (Subtle) -->
+<div class="absolute top-2 right-2 font-label-xs text-outline-variant opacity-40 select-none">
+            COORD: 34.0522° N, 118.2437° W | V_4.0.2_NEON | UP: 1,429:12:04
+        </div>
+<!-- Top Row: Metric Modules -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<!-- Metric Card 1 -->
+<div class="bg-surface-container-lowest module-border p-4 relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-xs text-outline uppercase">MOD-001 | Total Assets</span>
+<span class="material-symbols-outlined text-accent-cyan text-sm">precision_manufacturing</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-tech text-display-tech text-accent-cyan">1,248</span>
+<span class="font-label-xs text-accent-pink">+12%</span>
+</div>
+<div class="mt-4 h-1 bg-surface-variant/20 w-full rounded-full overflow-hidden">
+<div class="h-full bg-accent-cyan active-indicator-cyan" style="width: 85%"></div>
+</div>
+</div>
+<!-- Metric Card 2 -->
+<div class="bg-surface-container-lowest module-border p-4 relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-xs text-outline uppercase">MOD-002 | Online Status</span>
+<span class="material-symbols-outlined text-accent-pink text-sm">wifi_tethering</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-tech text-display-tech text-accent-pink">98.4%</span>
+<span class="font-label-xs text-on-surface-variant">NOMINAL</span>
+</div>
+<div class="mt-4 flex gap-1">
+<div class="h-1 flex-1 bg-accent-pink rounded-full"></div>
+<div class="h-1 flex-1 bg-accent-pink rounded-full"></div>
+<div class="h-1 flex-1 bg-accent-pink rounded-full"></div>
+<div class="h-1 flex-1 bg-surface-variant/30 rounded-full"></div>
+</div>
+</div>
+<!-- Metric Card 3 -->
+<div class="bg-surface-container-lowest module-border p-4 relative overflow-hidden group">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-xs text-outline uppercase">MOD-003 | Active Warnings</span>
+<span class="material-symbols-outlined text-accent-purple text-sm">warning</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-tech text-display-tech text-accent-purple">04</span>
+<span class="font-label-xs text-on-surface-variant uppercase">Standby</span>
+</div>
+<div class="mt-4 h-1 bg-surface-variant/20 w-full rounded-full overflow-hidden">
+<div class="h-full bg-accent-purple" style="width: 20%"></div>
+</div>
+</div>
+<!-- Metric Card 4 -->
+<div class="bg-surface-container-lowest module-border p-4 relative overflow-hidden group border-primary/20">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-xs text-outline uppercase">MOD-004 | System Health</span>
+<span class="material-symbols-outlined text-primary text-sm">ecg</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-tech text-display-tech text-primary">99.8%</span>
+</div>
+<!-- Sparkline SVG (Simplified) -->
+<div class="mt-4 h-8 w-full flex items-end gap-[2px]">
+<div class="bg-primary/20 w-1 rounded-t" style="height: 60%"></div>
+<div class="bg-primary/30 w-1 rounded-t" style="height: 70%"></div>
+<div class="bg-accent-purple/40 w-1 rounded-t" style="height: 65%"></div>
+<div class="bg-accent-cyan/50 w-1 rounded-t" style="height: 80%"></div>
+<div class="bg-primary/60 w-1 rounded-t" style="height: 75%"></div>
+<div class="bg-accent-cyan w-1 rounded-t shadow-[0_0_5px_rgba(0,242,255,0.5)]" style="height: 90%"></div>
+<div class="bg-primary w-1 rounded-t active-indicator-pink" style="height: 95%"></div>
+</div>
+</div>
+</div>
+<!-- Main Dashboard Area -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left: Active Monitoring (Technical Telemetry) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest module-border overflow-hidden rounded">
+<div class="flex justify-between items-center px-4 py-2 bg-surface-container border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="font-label-xs text-outline">MOD-082</span>
+<h2 class="font-headline-sm text-headline-sm uppercase tracking-tight text-on-surface">Active Monitoring</h2>
+</div>
+<div class="flex gap-2 items-center">
+<span class="w-2 h-2 bg-primary rounded-full led-pulse-pink"></span>
+<span class="font-label-xs text-primary uppercase">Live Stream</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container-lowest relative scanline">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Telemetry Unit 1 -->
+<div class="border border-outline-variant/20 p-4 bg-background/50 rounded">
+<div class="flex justify-between mb-4">
+<span class="font-data-mono text-data-mono uppercase text-on-surface-variant">Unit_ID: X-900</span>
+<span class="font-data-mono text-data-mono text-accent-cyan">STABLE</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-xs uppercase text-outline">CPU Loading</span>
+<span class="font-data-mono text-data-mono">42.8%</span>
+</div>
+<div class="h-2 bg-surface-variant/20 flex rounded-full overflow-hidden">
+<div class="bg-accent-cyan" style="width: 42.8%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-xs uppercase text-outline">MEM Utilization</span>
+<span class="font-data-mono text-data-mono">6.4 GB</span>
+</div>
+<div class="h-2 bg-surface-variant/20 flex rounded-full overflow-hidden">
+<div class="bg-accent-purple" style="width: 60%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-xs uppercase text-outline">Core Temp</span>
+<span class="font-data-mono text-data-mono text-accent-pink">44°C</span>
+</div>
+<div class="h-2 bg-surface-variant/20 flex rounded-full overflow-hidden">
+<div class="bg-accent-pink" style="width: 44%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Telemetry Unit 2 -->
+<div class="border border-outline-variant/20 p-4 bg-background/50 rounded">
+<div class="flex justify-between mb-4">
+<span class="font-data-mono text-data-mono uppercase text-on-surface-variant">Unit_ID: Y-412</span>
+<span class="font-data-mono text-data-mono text-accent-purple">IDLE</span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-xs uppercase text-outline">CPU Loading</span>
+<span class="font-data-mono text-data-mono">1.2%</span>
+</div>
+<div class="h-2 bg-surface-variant/20 flex rounded-full overflow-hidden">
+<div class="bg-accent-cyan" style="width: 1.2%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-xs uppercase text-outline">MEM Utilization</span>
+<span class="font-data-mono text-data-mono">1.1 GB</span>
+</div>
+<div class="h-2 bg-surface-variant/20 flex rounded-full overflow-hidden">
+<div class="bg-accent-purple" style="width: 10%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between mb-1">
+<span class="font-label-xs uppercase text-outline">Core Temp</span>
+<span class="font-data-mono text-data-mono">22°C</span>
+</div>
+<div class="h-2 bg-surface-variant/20 flex rounded-full overflow-hidden">
+<div class="bg-accent-pink" style="width: 22%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Technical Grid Overlay -->
+<div class="mt-6 border-t border-outline-variant/20 pt-4">
+<div class="flex justify-between font-data-mono text-label-xs text-outline-variant">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-accent-cyan animate-pulse"></span> VECTOR ANALYTICS :: ACTIVE</span>
+<span>REF: MAINT_0293_Z</span>
+</div>
+<div class="h-32 mt-2 bg-black/50 rounded flex items-end justify-between px-2 py-1 gap-1">
+<!-- Mock Histogram Multi-color -->
+<div class="flex-1 bg-accent-cyan/40 h-1/4 rounded-t"></div>
+<div class="flex-1 bg-accent-purple/40 h-2/4 rounded-t"></div>
+<div class="flex-1 bg-accent-pink/40 h-3/4 rounded-t"></div>
+<div class="flex-1 bg-accent-cyan/60 h-1/4 rounded-t"></div>
+<div class="flex-1 bg-accent-purple/60 h-2/4 rounded-t"></div>
+<div class="flex-1 bg-primary h-full rounded-t shadow-[0_0_8px_rgba(255,45,120,0.4)]"></div>
+<div class="flex-1 bg-accent-cyan/60 h-3/4 rounded-t"></div>
+<div class="flex-1 bg-accent-purple/40 h-2/4 rounded-t"></div>
+<div class="flex-1 bg-accent-pink/40 h-1/4 rounded-t"></div>
+<div class="flex-1 bg-accent-cyan/40 h-2/4 rounded-t"></div>
+<div class="flex-1 bg-accent-purple/20 h-1/4 rounded-t"></div>
+<div class="flex-1 bg-accent-pink/40 h-3/4 rounded-t"></div>
+<div class="flex-1 bg-accent-cyan/60 h-2/4 rounded-t"></div>
+<div class="flex-1 bg-accent-purple h-4/5 rounded-t"></div>
+<div class="flex-1 bg-accent-pink/30 h-2/4 rounded-t"></div>
+<div class="flex-1 bg-accent-cyan/20 h-1/5 rounded-t"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right: Monthly Interference (Rugged Histogram) -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest module-border overflow-hidden rounded">
+<div class="flex justify-between items-center px-4 py-2 bg-surface-container border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="font-label-xs text-outline">MOD-119</span>
+<h2 class="font-headline-sm text-headline-sm uppercase tracking-tight">Interference</h2>
+</div>
+</div>
+<div class="p-4 space-y-6">
+<div class="flex justify-between items-end h-48 border-b border-outline-variant/40 pb-2 gap-2">
+<div class="flex-1 bg-surface-variant/30 h-[30%] rounded-t"></div>
+<div class="flex-1 bg-accent-purple/40 h-[45%] rounded-t"></div>
+<div class="flex-1 bg-accent-cyan active-indicator-cyan h-[90%] rounded-t"></div>
+<div class="flex-1 bg-accent-pink/50 h-[55%] rounded-t"></div>
+<div class="flex-1 bg-surface-variant/30 h-[20%] rounded-t"></div>
+<div class="flex-1 bg-accent-purple/40 h-[40%] rounded-t"></div>
+<div class="flex-1 bg-accent-pink h-[75%] rounded-t shadow-[0_0_8px_rgba(255,45,120,0.3)]"></div>
+</div>
+<div class="flex justify-between font-label-xs text-outline px-1">
+<span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+</div>
+<div class="bg-surface-container/30 p-3 border border-outline-variant/20 rounded">
+<h3 class="font-label-xs uppercase text-primary mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">warning</span> Interference Alert
+                        </h3>
+<p class="text-xs text-on-surface-variant mb-3">Peak interference detected in Zone 4 during Wednesday cycle. Maintenance suggested.</p>
+<button class="w-full text-primary font-label-xs border border-primary/30 px-3 py-2 hover:bg-primary/10 transition-colors uppercase tracking-widest rounded">INITIATE SCAN</button>
+</div>
+</div>
+</div>
+<!-- Bottom: Recent Activity Log -->
+<div class="col-span-12 bg-surface-container-lowest module-border overflow-hidden rounded">
+<div class="flex justify-between items-center px-4 py-2 bg-surface-container border-b border-outline-variant/30">
+<div class="flex items-center gap-2">
+<span class="font-label-xs text-outline">MOD-024</span>
+<h2 class="font-headline-sm text-headline-sm uppercase tracking-tight">Recent Activity Log</h2>
+</div>
+<span class="font-data-mono text-label-xs text-on-surface-variant">LOGS_AUTO_SYNC: 0.1s</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/20 bg-surface-container/30">
+<th class="p-3 text-left font-label-xs uppercase text-outline w-32">Timestamp</th>
+<th class="p-3 text-left font-label-xs uppercase text-outline w-48">Asset ID</th>
+<th class="p-3 text-left font-label-xs uppercase text-outline">Event Description</th>
+<th class="p-3 text-left font-label-xs uppercase text-outline w-32">Status</th>
+<th class="p-3 text-right font-label-xs uppercase text-outline w-32">Action</th>
+</tr>
+</thead>
+<tbody class="font-data-mono text-data-mono divide-y divide-outline-variant/10">
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="p-3 text-on-surface-variant">14:22:04</td>
+<td class="p-3 text-accent-cyan">ARM-X82-B</td>
+<td class="p-3">Hydraulic seal replacement completed by Operator_04</td>
+<td class="p-3">
+<span class="flex items-center gap-2 text-accent-cyan">
+<span class="w-1.5 h-1.5 bg-accent-cyan rounded-full shadow-[0_0_5px_rgba(0,242,255,0.8)]"></span>
+                                        SUCCESS
+                                    </span>
+</td>
+<td class="p-3 text-right">
+<button class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary">open_in_new</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="p-3 text-on-surface-variant">14:18:59</td>
+<td class="p-3 text-accent-purple">SRV-002-CORE</td>
+<td class="p-3">Thermal variance detected in Main Processing Rack</td>
+<td class="p-3">
+<span class="flex items-center gap-2 text-accent-pink">
+<span class="w-1.5 h-1.5 bg-accent-pink rounded-full led-pulse-pink"></span>
+                                        WARNING
+                                    </span>
+</td>
+<td class="p-3 text-right">
+<button class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary">open_in_new</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="p-3 text-on-surface-variant">13:45:12</td>
+<td class="p-3 text-accent-cyan">PUMP-004</td>
+<td class="p-3">Automatic lubrication cycle initialized [CODE: 204]</td>
+<td class="p-3">
+<span class="flex items-center gap-2 text-outline">
+<span class="w-1.5 h-1.5 bg-outline rounded-full"></span>
+                                        PENDING
+                                    </span>
+</td>
+<td class="p-3 text-right">
+<button class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary">open_in_new</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group border-l-2 border-primary">
+<td class="p-3 text-on-surface-variant">13:30:00</td>
+<td class="p-3 text-accent-pink">SYS_INIT</td>
+<td class="p-3">Full system integrity check requested by Administrator Profile</td>
+<td class="p-3">
+<span class="flex items-center gap-2 text-accent-cyan">
+<span class="w-1.5 h-1.5 bg-accent-cyan rounded-full"></span>
+                                        SUCCESS
+                                    </span>
+</td>
+<td class="p-3 text-right">
+<button class="material-symbols-outlined text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary">open_in_new</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Micro-interactions and real-time feel
+        setInterval(() => {
+            const statusIndicator = document.querySelector('.led-pulse-pink');
+            if (statusIndicator) {
+                statusIndicator.style.opacity = Math.random() > 0.5 ? '1' : '0.4';
+            }
+        }, 3000);
+    });
+</script>
+</body></html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>IAS Support | Neon Asset Registry</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#120b18",
+                        "on-primary-container": "#ff2d78",
+                        "tertiary": "#bd5eff",
+                        "on-secondary-fixed-variant": "#5e4200",
+                        "secondary-fixed-dim": "#ffba20",
+                        "error": "#ff2d78",
+                        "on-background": "#f0e6f5",
+                        "surface-container": "#1a0f22",
+                        "on-surface": "#f0e6f5",
+                        "surface-container-lowest": "#0a060d",
+                        "on-primary-fixed": "#320015",
+                        "on-tertiary-fixed": "#250040",
+                        "on-secondary": "#412d00",
+                        "surface-dim": "#120b18",
+                        "tertiary-container": "#4d0084",
+                        "surface-tint": "#ff2d78",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#6b4b00",
+                        "primary-fixed-dim": "#ff2d78",
+                        "on-error-container": "#ffd9e2",
+                        "background": "#0a060d",
+                        "error-container": "#930030",
+                        "surface": "#0a060d",
+                        "primary-fixed": "#ffd9e2",
+                        "tertiary-fixed": "#f0dbff",
+                        "surface-variant": "#2b1b35",
+                        "outline": "#8a7596",
+                        "surface-container-high": "#24152e",
+                        "inverse-surface": "#f0e6f5",
+                        "on-tertiary-container": "#f0dbff",
+                        "tertiary-fixed-dim": "#bd5eff",
+                        "inverse-primary": "#ff2d78",
+                        "secondary-container": "#feb700",
+                        "primary": "#ff2d78",
+                        "inverse-on-surface": "#1a0f22",
+                        "secondary": "#ffdb9d",
+                        "surface-container-highest": "#321d3f",
+                        "on-secondary-fixed": "#271900",
+                        "primary-container": "#64002e",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#2d1b38",
+                        "on-surface-variant": "#c9b9d1",
+                        "secondary-fixed": "#ffdea8",
+                        "on-primary-fixed-variant": "#930040",
+                        "on-tertiary-fixed-variant": "#8200dd",
+                        "outline-variant": "#4b3a55",
+                        "neon-cyan": "#00f2ff",
+                        "neon-purple": "#bd5eff",
+                        "neon-pink": "#ff2d78",
+                        "neon-yellow": "#ffba20"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "unit": "4px",
+                        "module-padding": "16px",
+                        "grid-overlay-size": "32px",
+                        "row-height-dense": "56px"
+                    },
+                    "fontFamily": {
+                        "data-mono-mobile": ["JetBrains Mono"],
+                        "label-xs": ["JetBrains Mono"],
+                        "headline-sm": ["Sora"],
+                        "body-md": ["Sora"],
+                        "data-mono": ["JetBrains Mono"],
+                        "display-tech": ["Sora"]
+                    },
+                    "fontSize": {
+                        "data-mono-mobile": ["12px", {"lineHeight": "14px", "fontWeight": "500"}],
+                        "label-xs": ["10px", {"lineHeight": "12px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "data-mono": ["13px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-tech": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a060d;
+            background-image: 
+                linear-gradient(rgba(255, 45, 120, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 45, 120, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            color: #f0e6f5;
+        }
+        .scanline {
+            background: linear-gradient(to bottom, rgba(10, 6, 13, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 45, 120, 0.04), rgba(0, 242, 255, 0.02), rgba(189, 94, 255, 0.04));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+        .glow-pink { box-shadow: 0 0 10px rgba(255, 45, 120, 0.4); }
+        .glow-cyan { box-shadow: 0 0 10px rgba(0, 242, 255, 0.4); }
+        .glow-purple { box-shadow: 0 0 10px rgba(189, 94, 255, 0.4); }
+        
+        .asset-row:hover .spec-panel {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .led-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0a060d;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4b3a55;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .neon-border-b {
+            border-bottom: 1px solid rgba(255, 45, 120, 0.2);
+            box-shadow: 0 1px 0 0 rgba(255, 45, 120, 0.1);
+        }
+    </style>
+</head>
+<body class="font-body-md overflow-hidden h-screen flex">
+<div class="scanline absolute inset-0 z-[100] opacity-15"></div>
+<!-- SideNavBar -->
+<nav class="flex flex-col h-full z-40 transition-all duration-300 ease-in-out fixed left-0 top-0 w-[240px] bg-surface-container border-r border-outline-variant/30 hidden md:flex">
+<div class="p-module-padding flex flex-col gap-unit">
+<div class="flex items-center gap-2 mb-6">
+<div class="w-8 h-8 bg-neon-pink rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xl">token</span>
+</div>
+<span class="font-display-tech text-neon-pink text-lg tracking-tighter">NEON_IAS</span>
+</div>
+<div class="flex items-center gap-3 mb-2 p-2 bg-surface-container-high border border-outline-variant/20">
+<div class="w-10 h-10 border border-neon-pink/50 flex items-center justify-center bg-background overflow-hidden relative">
+<img class="w-full h-full object-cover grayscale brightness-125" data-alt="A professional close-up of a system operator in an industrial control room, wearing specialized technical gear, dimly lit with cool cyan light reflecting off their face and equipment, cinematic industrial aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeRfVv3BJ6aUuAjSzy4XzvYPavD1nw3Y1nBVr_Y9hAIkVGji-xLDjCgiIUNLwkrqf268gr_JbtJYRT9pDJqyvE1PwmcgH9DoUj9o7EJUgTlQ2tOhOdAtyKJKcKDVaYw1uBdVTZ-qlxN1Fl_BKG5UVUZcQ3CZpotpaYSYcrWeiO1yQCIErlC0YO_bTag9skubH3lV6pDbwFkryArwo9muBn1CXRWfNtEEidyGIVbbyZFFtbZmzY1FJPuIDyrGVwrTfUqV7lZ19xg0c">
+<div class="absolute inset-0 bg-neon-pink/10 mix-blend-color"></div>
+</div>
+<div>
+<div class="font-label-xs text-on-surface uppercase tracking-widest text-[9px]">Main Ops</div>
+<div class="text-[10px] text-neon-pink font-data-mono">Admin Level 4</div>
+</div>
+</div>
+</div>
+<div class="flex-1 px-2 py-4 space-y-1">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-neon-pink/10 hover:text-neon-pink transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-label-xs uppercase group-hover:tracking-widest transition-all">Overview</span>
+</a>
+<a class="flex items-center gap-3 bg-neon-pink/10 text-neon-pink border-r-4 border-neon-pink px-4 py-3 shadow-[0_0_15px_rgba(255,45,120,0.15)] transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-xs uppercase">Inventory</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-neon-purple/10 hover:text-neon-purple transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">build</span>
+<span class="font-label-xs uppercase group-hover:tracking-widest transition-all">Maintenance</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-surface-variant transition-all" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-label-xs uppercase">Personnel</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-3 hover:bg-neon-cyan/10 hover:text-neon-cyan transition-all group" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="font-label-xs uppercase group-hover:tracking-widest transition-all">Reports</span>
+</a>
+</div>
+<div class="p-module-padding">
+<button class="w-full border border-neon-pink text-neon-pink py-2 text-label-xs font-bold uppercase hover:bg-neon-pink hover:text-white transition-all glow-pink">
+                New Command
+            </button>
+</div>
+<div class="mt-auto border-t border-outline-variant/20 p-2">
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span class="text-[11px] font-label-xs uppercase">Support</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant px-4 py-2 hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="text-[11px] font-label-xs uppercase">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 md:ml-[240px] flex flex-col h-full bg-background relative">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-gutter w-full h-row-height-dense z-50 bg-surface-container/60 backdrop-blur-xl border-b border-outline-variant/30">
+<div class="flex items-center gap-gutter">
+<div class="font-headline-sm text-headline-sm font-bold text-neon-pink uppercase tracking-tighter">REGISTRY_OS</div>
+<div class="h-6 w-[1px] bg-outline-variant/30 mx-2"></div>
+<nav class="hidden lg:flex gap-6">
+<a class="text-on-surface-variant font-label-xs uppercase hover:text-neon-pink transition-colors" href="#">Dashboard</a>
+<a class="text-neon-pink border-b-2 border-neon-pink pb-1 font-label-xs uppercase" href="#">Assets</a>
+<a class="text-on-surface-variant font-label-xs uppercase hover:text-neon-purple transition-colors" href="#">Schedule</a>
+<a class="text-on-surface-variant font-label-xs uppercase hover:text-neon-cyan transition-colors" href="#">Logs</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden sm:flex items-center gap-2">
+<span class="w-2 h-2 bg-neon-cyan rounded-full led-pulse shadow-[0_0_8px_#00f2ff]"></span>
+<span class="font-data-mono text-[11px] text-neon-cyan">Grid Status: Stable</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-neon-pink transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-neon-purple transition-colors">settings</button>
+<div class="w-8 h-8 rounded-full border border-neon-pink/30 overflow-hidden ring-2 ring-neon-pink/10 ring-offset-2 ring-offset-background">
+<img class="w-full h-full object-cover grayscale" data-alt="Small avatar photo of a professional systems administrator in a dark tech-focused environment, sharp focus, cool lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQIS2DDvW-hku0XTj1Ee6aHAonN0qJfYfoDgG_fHOxlOEzgDmdGZiz3IhQ_spZTtLaAb4IPr-mk0gn_t5rwoQcPXsOavvFvQzlHbVDsa6JlGzUUm4EbYjGNI8AqpfuXQmkZeo7QIaG_QUTyAzLD96EBFCx3ZUzmU1MHDyDSPLO-xZZhXxzlNYF_kNFdaACC1zYWKd4IqiYDqZDTsx12l6jgreX2parzsDDf57ZfmXEzQX4Ul46Vs82Xv510Djz9nGx274epoFE4NI">
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 overflow-hidden p-gutter flex flex-col gap-gutter">
+<!-- Header/Filters -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h1 class="font-display-tech text-display-tech text-on-surface uppercase mb-1 flex items-center gap-3">
+<span class="text-neon-pink">//</span> Hardware Registry
+                    </h1>
+<div class="font-data-mono text-label-xs text-outline-variant">SYSTEM_ID: TRM-99-TOK // NODES_ALLOCATED: 1,482</div>
+</div>
+<!-- Category Filters -->
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1 border border-neon-pink bg-neon-pink/10 text-neon-pink font-data-mono text-[11px] flex items-center gap-2 group hover:bg-neon-pink hover:text-white transition-all">
+                        ALL <span class="bg-neon-pink text-white px-1 font-bold group-hover:bg-white group-hover:text-neon-pink">1482</span>
+</button>
+<button class="px-3 py-1 border border-outline-variant/40 text-on-surface-variant font-data-mono text-[11px] hover:border-neon-cyan hover:text-neon-cyan transition-all flex items-center gap-2">
+                        SERVERS <span class="bg-outline-variant/20 text-on-surface px-1">42</span>
+</button>
+<button class="px-3 py-1 border border-outline-variant/40 text-on-surface-variant font-data-mono text-[11px] hover:border-neon-purple hover:text-neon-purple transition-all flex items-center gap-2">
+                        WKS <span class="bg-outline-variant/20 text-on-surface px-1">840</span>
+</button>
+<button class="px-3 py-1 border border-outline-variant/40 text-on-surface-variant font-data-mono text-[11px] hover:border-neon-yellow hover:text-neon-yellow transition-all flex items-center gap-2">
+                        IOT <span class="bg-outline-variant/20 text-on-surface px-1">600</span>
+</button>
+</div>
+</div>
+<!-- Registry Table Module -->
+<div class="flex-1 bg-surface-container-lowest border border-outline-variant/30 flex flex-col overflow-hidden relative shadow-2xl">
+<!-- Module Header -->
+<div class="h-8 bg-surface-container-high border-b border-outline-variant/30 flex items-center px-4 justify-between">
+<div class="flex items-center gap-3">
+<span class="font-data-mono text-[10px] text-neon-pink">X-DB_VIEWER</span>
+<div class="h-3 w-[1px] bg-outline-variant/30"></div>
+<span class="font-label-xs uppercase text-on-surface-variant tracking-wider text-[9px]">Query Response: 200 OK</span>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-[14px] text-outline-variant hover:text-neon-pink cursor-pointer transition-colors">sync</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant hover:text-neon-pink cursor-pointer transition-colors">filter_list</span>
+<span class="material-symbols-outlined text-[14px] text-outline-variant hover:text-neon-pink cursor-pointer transition-colors">fullscreen</span>
+</div>
+</div>
+<!-- Table Header -->
+<div class="grid grid-cols-12 border-b border-outline-variant/30 bg-surface-container/50 font-label-xs uppercase text-outline-variant text-[10px] tracking-widest">
+<div class="col-span-1 p-3 border-r border-outline-variant/30 text-center">ID</div>
+<div class="col-span-2 p-3 border-r border-outline-variant/30">Asset Code</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/30">Network Identity</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/30">Connectivity Status</div>
+<div class="col-span-3 p-3">Physical Location</div>
+</div>
+<!-- Table Body -->
+<div class="flex-1 overflow-y-auto custom-scrollbar bg-background">
+<!-- Row 1: Operational (Cyan) -->
+<div class="asset-row group grid grid-cols-12 border-b border-outline-variant/10 hover:bg-neon-cyan/[0.03] transition-colors relative cursor-crosshair">
+<div class="col-span-1 p-3 border-r border-outline-variant/10 font-data-mono text-center text-outline-variant">01</div>
+<div class="col-span-2 p-3 border-r border-outline-variant/10">
+<span class="bg-neon-cyan/10 text-neon-cyan font-data-mono px-2 py-1 text-[12px] border border-neon-cyan/30 rounded-sm">SRV-MAIN-001</span>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10">
+<div class="font-data-mono text-on-surface">192.168.1.100</div>
+<div class="text-[10px] text-outline-variant font-data-mono">MAC: 00:1A:2B:3C:4D:5E</div>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10 flex items-center gap-3">
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 bg-neon-cyan glow-cyan led-pulse rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-neon-cyan opacity-20 rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-neon-cyan opacity-5 rounded-full"></span>
+</div>
+<span class="font-data-mono text-[11px] text-neon-cyan uppercase tracking-tighter">Operational / 4ms</span>
+</div>
+<div class="col-span-3 p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[16px] text-outline-variant group-hover:text-neon-cyan transition-colors">location_on</span>
+<div>
+<div class="font-data-mono text-on-surface text-[12px]">DC-NORTH-A1</div>
+<div class="text-[9px] text-outline-variant font-data-mono">REGION_US_EAST_01</div>
+</div>
+</div>
+<!-- Hover Detail Panel -->
+<div class="spec-panel opacity-0 absolute left-48 top-12 z-[60] w-64 bg-surface-container-high border border-neon-cyan p-4 pointer-events-none transform translate-y-2 transition-all shadow-2xl backdrop-blur-lg">
+<div class="text-neon-cyan font-label-xs uppercase mb-3 border-b border-neon-cyan/30 pb-1">Micro-Specs :: SRV_001</div>
+<div class="space-y-2 font-data-mono text-[11px]">
+<div class="flex justify-between"><span class="text-outline-variant">MODEL:</span> <span class="text-neon-cyan">HPE ProLiant Gen10</span></div>
+<div class="flex justify-between"><span class="text-outline-variant">SERIAL:</span> <span>CN78420-KL9</span></div>
+<div class="flex justify-between"><span class="text-outline-variant">WARRANTY:</span> <span class="text-neon-purple">EXP 2026-04-12</span></div>
+<div class="flex justify-between"><span class="text-outline-variant">UPTIME:</span> <span>142D 04H 21M</span></div>
+</div>
+</div>
+</div>
+<!-- Row 2: Standby (Purple) -->
+<div class="asset-row group grid grid-cols-12 border-b border-outline-variant/10 hover:bg-neon-purple/[0.03] transition-colors relative cursor-crosshair">
+<div class="col-span-1 p-3 border-r border-outline-variant/10 font-data-mono text-center text-outline-variant">02</div>
+<div class="col-span-2 p-3 border-r border-outline-variant/10">
+<span class="bg-neon-purple/10 text-neon-purple font-data-mono px-2 py-1 text-[12px] border border-neon-purple/30 rounded-sm">WKS-ENG-422</span>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10">
+<div class="font-data-mono text-neon-purple">192.168.2.145</div>
+<div class="text-[10px] text-outline-variant font-data-mono">MAC: E4:D5:C6:B7:A8:99</div>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10 flex items-center gap-3">
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 bg-neon-purple led-pulse rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-neon-purple opacity-20 rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-neon-purple opacity-5 rounded-full"></span>
+</div>
+<span class="font-data-mono text-[11px] text-neon-purple uppercase tracking-tighter">Standby / No Load</span>
+</div>
+<div class="col-span-3 p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[16px] text-outline-variant group-hover:text-neon-purple transition-colors">location_on</span>
+<div>
+<div class="font-data-mono text-on-surface text-[12px]">ENG-LAB-B</div>
+<div class="text-[9px] text-outline-variant font-data-mono">FLOOR_02 / ROOM_204</div>
+</div>
+</div>
+<div class="spec-panel opacity-0 absolute left-48 top-12 z-[60] w-64 bg-surface-container-high border border-neon-purple p-4 pointer-events-none transform translate-y-2 transition-all shadow-2xl backdrop-blur-lg">
+<div class="text-neon-purple font-label-xs uppercase mb-3 border-b border-neon-purple/30 pb-1">Micro-Specs :: WKS_422</div>
+<div class="space-y-2 font-data-mono text-[11px]">
+<div class="flex justify-between"><span class="text-outline-variant">MODEL:</span> <span class="text-neon-purple">Precision 7920</span></div>
+<div class="flex justify-between"><span class="text-outline-variant">OS:</span> <span>Windows 11 Enterprise</span></div>
+<div class="flex justify-between"><span class="text-outline-variant">LOAD:</span> <span class="text-neon-cyan">0.02%</span></div>
+</div>
+</div>
+</div>
+<!-- Row 3: Critical Failure (Pink) -->
+<div class="asset-row group grid grid-cols-12 border-b border-outline-variant/10 hover:bg-neon-pink/[0.05] transition-colors relative cursor-crosshair">
+<div class="col-span-1 p-3 border-r border-outline-variant/10 font-data-mono text-center text-outline-variant">03</div>
+<div class="col-span-2 p-3 border-r border-outline-variant/10">
+<span class="bg-neon-pink/20 text-neon-pink font-data-mono px-2 py-1 text-[12px] border border-neon-pink/40 rounded-sm glow-pink">IOT-SENS-889</span>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10">
+<div class="font-data-mono text-neon-pink underline decoration-neon-pink/30">10.0.4.52</div>
+<div class="text-[10px] text-neon-pink/60 font-data-mono">MAC: AA:BB:CC:11:22:33</div>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10 flex items-center gap-3">
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 bg-neon-pink led-pulse rounded-full shadow-[0_0_8px_#ff2d78]"></span>
+<span class="w-1.5 h-1.5 bg-neon-pink led-pulse rounded-full delay-75"></span>
+<span class="w-1.5 h-1.5 bg-neon-pink led-pulse rounded-full delay-150"></span>
+</div>
+<span class="font-data-mono text-[11px] text-neon-pink uppercase font-bold tracking-tighter">Critical Failure / Timeout</span>
+</div>
+<div class="col-span-3 p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[16px] text-neon-pink animate-pulse">warning</span>
+<div>
+<div class="font-data-mono text-neon-pink text-[12px]">EXT-REFINERY-P2</div>
+<div class="text-[9px] text-outline-variant font-data-mono">COORD_FAILURE_RETRY</div>
+</div>
+</div>
+<div class="spec-panel opacity-0 absolute left-48 top-12 z-[60] w-64 bg-surface-container-high border border-neon-pink p-4 pointer-events-none transform translate-y-2 transition-all shadow-2xl backdrop-blur-lg">
+<div class="text-neon-pink font-label-xs uppercase mb-3 border-b border-neon-pink/30 pb-1">Error Report :: SENS_889</div>
+<div class="space-y-2 font-data-mono text-[11px]">
+<div class="flex justify-between"><span class="text-outline-variant">ERROR:</span> <span class="text-neon-pink font-bold">TIMEOUT_ACK</span></div>
+<div class="flex justify-between"><span class="text-outline-variant">SEVERITY:</span> <span class="text-neon-pink">LEVEL_01</span></div>
+<div class="flex justify-between"><span class="text-outline-variant">LAST_SEEN:</span> <span>12M AGO</span></div>
+</div>
+</div>
+</div>
+<!-- Row 4: Scheduled Offline (Grayish/Outline) -->
+<div class="asset-row group grid grid-cols-12 border-b border-outline-variant/10 hover:bg-white/[0.02] transition-colors relative cursor-crosshair">
+<div class="col-span-1 p-3 border-r border-outline-variant/10 font-data-mono text-center text-outline-variant">04</div>
+<div class="col-span-2 p-3 border-r border-outline-variant/10">
+<span class="bg-surface-variant/40 text-on-surface-variant font-data-mono px-2 py-1 text-[12px] border border-outline-variant/30 rounded-sm">PLC-CTL-50</span>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10">
+<div class="font-data-mono text-on-surface-variant">172.16.4.12</div>
+<div class="text-[10px] text-outline-variant font-data-mono">MAC: 99:88:77:66:55:44</div>
+</div>
+<div class="col-span-3 p-3 border-r border-outline-variant/10 flex items-center gap-3">
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 bg-outline-variant opacity-20 rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-outline-variant opacity-20 rounded-full"></span>
+<span class="w-1.5 h-1.5 bg-outline-variant opacity-40 rounded-full"></span>
+</div>
+<span class="font-data-mono text-[11px] text-outline-variant uppercase tracking-tighter">OFFLINE / Scheduled</span>
+</div>
+<div class="col-span-3 p-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-[16px] text-outline-variant">schedule</span>
+<div>
+<div class="font-data-mono text-on-surface-variant text-[12px]">ASSEMBLY-L1</div>
+<div class="text-[9px] text-outline-variant font-data-mono">MAINTENANCE_WINDOW_A</div>
+</div>
+</div>
+</div>
+<!-- Additional decorative rows with Neon Tokyo variations -->
+<script>
+                        const states = [
+                            { color: 'neon-cyan', label: 'Operational', accent: 'cyan' },
+                            { color: 'neon-purple', label: 'Standby', accent: 'purple' },
+                            { color: 'neon-yellow', label: 'Warning', accent: 'yellow' },
+                            { color: 'outline-variant', label: 'Syncing', accent: 'gray' }
+                        ];
+                        for(let i=5; i<=25; i++) {
+                            const state = states[i % states.length];
+                            document.write(`
+                                <div class="asset-row group grid grid-cols-12 border-b border-outline-variant/5 hover:bg-${state.color}/[0.02] transition-colors relative opacity-60 hover:opacity-100">
+                                    <div class="col-span-1 p-3 border-r border-outline-variant/5 font-data-mono text-center text-outline-variant/50">${i < 10 ? '0'+i : i}</div>
+                                    <div class="col-span-2 p-3 border-r border-outline-variant/5">
+                                        <span class="text-on-surface-variant font-data-mono text-[11px]">GEN-NODE-${100+i}</span>
+                                    </div>
+                                    <div class="col-span-3 p-3 border-r border-outline-variant/5">
+                                        <div class="font-data-mono text-outline-variant text-[12px]">10.0.0.${i}</div>
+                                    </div>
+                                    <div class="col-span-3 p-3 border-r border-outline-variant/5 flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 bg-${state.color} rounded-full ${state.accent === 'cyan' ? 'led-pulse' : ''}"></span>
+                                        <span class="font-data-mono text-[10px] text-outline-variant uppercase">${state.label}...</span>
+                                    </div>
+                                    <div class="col-span-3 p-3">
+                                        <div class="font-data-mono text-[10px] text-outline-variant/70 italic">Pending telemetry link...</div>
+                                    </div>
+                                </div>
+                            `);
+                        }
+                    </script>
+</div>
+</div>
+<!-- Footer Meta Info -->
+<div class="h-8 flex items-center justify-between font-data-mono text-[10px] text-outline-variant bg-surface-container/30 px-3 border border-outline-variant/20 rounded-sm">
+<div class="flex gap-4 items-center">
+<span class="text-neon-pink">UPTIME: 1242:04:12:88</span>
+<div class="h-2 w-[1px] bg-outline-variant/30"></div>
+<span>PACKET_LOSS: 0.002%</span>
+<div class="h-2 w-[1px] bg-outline-variant/30"></div>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">satellite_alt</span>
+                        GRID_COORD: 40.7, -74.0
+                    </span>
+</div>
+<div class="flex gap-4 items-center">
+<span class="text-neon-cyan tracking-widest">CONNECTED // SECURE_CHANNEL_AES256</span>
+<span class="w-2 h-2 bg-neon-cyan rounded-full led-pulse shadow-[0_0_5px_#00f2ff]"></span>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-high border-t border-neon-pink/30 z-[110] flex justify-around items-center h-16 backdrop-blur-md">
+<button class="flex flex-col items-center text-outline-variant">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[9px] font-label-xs uppercase">Ops</span>
+</button>
+<button class="flex flex-col items-center text-neon-pink">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="text-[9px] font-label-xs uppercase">Assets</span>
+</button>
+<button class="flex flex-col items-center text-outline-variant">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[9px] font-label-xs uppercase">Reports</span>
+</button>
+<button class="flex flex-col items-center text-outline-variant">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[9px] font-label-xs uppercase">Config</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for row glowing with dynamic state detection
+        const rows = document.querySelectorAll('.asset-row');
+        rows.forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                // Simple color detection based on classes for neon effect
+                let color = '#ff2d78'; // Default pink
+                if (row.classList.contains('hover:bg-neon-cyan/[0.03]')) color = '#00f2ff';
+                if (row.classList.contains('hover:bg-neon-purple/[0.03]')) color = '#bd5eff';
+                
+                row.style.boxShadow = `inset 4px 0 0 ${color}`;
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.boxShadow = 'none';
+            });
+        });
+    </script>
+</body></html>
